@@ -9,14 +9,11 @@ import {
 import { CreateMessageDTO } from './dtos/create-message.dto';
 import { MessagesService } from './messages.service';
 
+// because the contoller is not a dependency to any other class
+// we do not need to add the @Injectable decorator
 @Controller('messages')
 export class MessagesController {
-  messagesService: MessagesService;
-
-  constructor() {
-    // DONT do this on real app, use dependancy injection
-    this.messagesService = new MessagesService();
-  }
+  constructor(public messagesService: MessagesService) {}
 
   @Get()
   listMessages() {

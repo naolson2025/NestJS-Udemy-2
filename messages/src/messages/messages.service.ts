@@ -1,13 +1,15 @@
+import { Injectable } from '@nestjs/common';
 import { MessagesRepository } from './messages.repository';
 
+// Injectable marks the class for registration inside the dependancy
+// injection container. Since this is a dependancy to other classes.
+@Injectable()
 export class MessagesService {
-  messagesRepo: MessagesRepository;
-
-  constructor() {
-    // This service is creating its own dependencies
-    // Don't do this on real apps. We will remove it soon with injection
-    this.messagesRepo = new MessagesRepository();
-  }
+  // by adding public here it automatically adds messagesRepo as
+  // a dependency to the class. Therefore no need to have this line of code
+  // in the constructor
+  // this.messagesRepo = repo
+  constructor(public messagesRepo: MessagesRepository) {}
 
   async findOne(id: string) {
     return this.messagesRepo.findOne(id);
