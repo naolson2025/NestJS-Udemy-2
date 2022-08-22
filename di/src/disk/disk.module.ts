@@ -5,5 +5,6 @@ import { PowerModule } from 'src/power/power.module';
 @Module({
   imports: [PowerModule],
   providers: [DiskService],
+  exports: [DiskService],
 })
 export class DiskModule {}
