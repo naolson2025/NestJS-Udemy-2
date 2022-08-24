@@ -15,6 +15,7 @@ export class User {
   @Column()
   email: string;
 
+  // Here @Exclude is preventing the password from being sent to the client
   @Column()
   password: string;
 
