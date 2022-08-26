@@ -1,11 +1,26 @@
 # Create a new user
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "plumpBoi"
+}
+
+### signin
 POST http://localhost:3000/auth/signin
 content-type: application/json
 
 {
-  "email": "hashtest@email.com",
+  "email": "test@test.com",
   "password": "plumpBoi"
 }
+
+### signout
+POST http://localhost:3000/auth/signout
+
+### check who I'm signed in as by checking cookie
+GET http://localhost:3000/auth/whoami
 
 ### find user with id
 GET http://localhost:3000/auth/2
@@ -23,3 +38,9 @@ content-type: application/json
 {
   "email": "heresanewemail@test.com"
 }
+
+### set a color
+GET http://localhost:3000/auth/colors/blue
+
+### Get the color
+GET http://localhost:3000/auth/colors

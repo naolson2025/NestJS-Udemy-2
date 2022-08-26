@@ -18,6 +18,9 @@ export class UsersService {
   }
 
   findOne(id: number) {
+    if (!id) {
+      return null;
+    }
     // this will return one value or null
     // findOne() is a built in function on the TypeORM repository api
     return this.repo.findOneBy({ id });
