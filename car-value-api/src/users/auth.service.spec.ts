@@ -8,11 +8,25 @@ describe('AuthService', () => {
   let service: AuthService;
   let fakeUsersService: Partial<UsersService>;
 
+  // runs before each it()
   beforeEach(async () => {
+    // create fake a array of users
+    // more advanced way of mocking a service
+    const users: User[] = [];
     fakeUsersService = {
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as User),
+      find: (email: string) => {
+        const filteredUser = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUser);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 9999),
+          email,
+          password,
+        } as User;
+        users.push(user);
+        return Promise.resolve(user);
+      },
     };
 
     const module = await Test.createTestingModule({
@@ -39,11 +53,7 @@ describe('AuthService', () => {
   });
 
   it('throws an error if user signs up with an email thats already in use', async () => {
-    // change the fakeUsersService to fit the needs of this test
-    // we provide 1 user as a response so the signup() will fail because it checks to see
-    // if the array has a length greater than 0, then throw an error
-    fakeUsersService.find = () =>
-      Promise.resolve([{ id: 1, email: 'a', password: '1' } as User]);
+    await service.signup('test@test.com', 'password');
 
     try {
       await service.signup('test@test.com', 'password');
@@ -57,24 +67,15 @@ describe('AuthService', () => {
   });
 
   it('throws if an invalid password is provided', async () => {
-    fakeUsersService.find = () =>
-      Promise.resolve([{ email: 'test@test.com', password: 'pass' } as User]);
+    // test is not working it should fail if the passwords are the same
+    await service.signup('test@test.com', 'pass');
     try {
       await service.signin('test@test.com', 'password');
     } catch (error) {}
   });
 
   it('returns a user if correct password is provided', async () => {
-    // this uses a real salt and hash, but its a quick and dirty solution
-    // there is a better way so we don't need to manually put in a real salt and hash
-    fakeUsersService.find = () =>
-      Promise.resolve([
-        {
-          email: 'test@test.com',
-          password:
-            'a1d8238e54cb74a2.2d03e3ac43faecb3666b4278799aecfbd50c138d4c521f7d82d11faacb3e98c3',
-        } as User,
-      ]);
+    await service.signup('test@test.com', 'pass');
 
     const user = await service.signin('test@test.com', 'pass');
     expect(user).toBeDefined();
