@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,6 +8,7 @@ import { ReportsModule } from './reports/reports.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { Report } from './reports/report.entity';
+const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
@@ -30,6 +32,32 @@ import { Report } from './reports/report.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      // validates that any extra properties not part of the dto
+      // are stripped away
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  // This configure function will be called automatically whenever
+  // our app starts listening for incoming traffic
+  configure(consumer: MiddlewareConsumer) {
+    // run on every incoming request
+    // this is globally scoped Middleware
+    consumer
+      .apply(
+        cookieSession({
+          // This random string is being used to encrypt the cookie
+          // for dev this is fine
+          keys: ['alkibel'],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
