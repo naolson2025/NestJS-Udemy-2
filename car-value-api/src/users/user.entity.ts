@@ -1,3 +1,4 @@
+import { Report } from 'src/reports/report.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -5,6 +6,7 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -18,6 +20,9 @@ export class User {
   // Here @Exclude is preventing the password from being sent to the client
   @Column()
   password: string;
+
+  @OneToMany(() => Report, (report) => report.user)
+  reports: Report[];
 
   // Here we have 3 examples of adding logic to an entity file
   // We can run a function AfterInsert that will log the id of the inserted user
