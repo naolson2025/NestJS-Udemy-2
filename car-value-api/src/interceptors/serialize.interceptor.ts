@@ -30,12 +30,12 @@ export class SerializeInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     // run something before a request is handled by the request handler
-    console.log('Im running before the handler', context);
+    // console.log('Im running before the handler', context);
 
     return next.handle().pipe(
       map((data: any) => {
         // run something before the response is sent out
-        console.log('running after the response is sent', data);
+        // console.log('running after the response is sent', data);
         // plainToInstance() turns our data into an instance of UserDto
         // Which then gets validated
         return plainToInstance(this.dto, data, {
